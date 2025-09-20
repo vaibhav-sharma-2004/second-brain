@@ -106,3 +106,18 @@ export const signInUser = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const logOutUser = (req: Request, res: Response) => {
+  try {
+    res.status(200).clearCookie("token").json({
+      success: true,
+      message: "user logged out successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error,
+    });
+  }
+};
