@@ -109,10 +109,18 @@ export const signInUser = async (req: Request, res: Response) => {
 
 export const logOutUser = (req: Request, res: Response) => {
   try {
-    res.status(200).clearCookie("token").json({
-      success: true,
-      message: "user logged out successfully",
-    });
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", 
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/", 
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "User logged out successfully",
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({
