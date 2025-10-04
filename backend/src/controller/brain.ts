@@ -36,14 +36,15 @@ export const shareBrain = async (req: Request, res: Response) => {
     }
 
     if (share && shareLinkExist) {
-      return res.status(200).json({
+       res.status(200).json({
         success: true,
         message: "share link already exists",
         data: shareLinkExist,
       });
+      return;
     }
 
-    return res.status(200).json({
+     res.status(200).json({
       success: true,
       message: "no share link exists to delete",
     });

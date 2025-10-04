@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import ContentModel from "../models/content";
 import UserModel from "../models/user";
 
+function removeSensitiveFields(obj: any, blacklist: string[]) {
+  const filtered: any = { ...obj }; // copy all fields
+  for (const field of blacklist) {
+    if (field in filtered) delete filtered[field]; // remove sensitive fields
+  }
+  return filtered;
+}
+
 export const createContent = async (req: Request, res: Response) => {
   try {
     const { title, link, type, tags, userId } = req.body;
@@ -96,13 +104,6 @@ export const getContentById = async (req: Request, res: Response) => {
   }
 };
 
-function removeSensitiveFields(obj: any, blacklist: string[]) {
-  const filtered: any = { ...obj }; // copy all fields
-  for (const field of blacklist) {
-    if (field in filtered) delete filtered[field]; // remove sensitive fields
-  }
-  return filtered;
-}
 
 
 export const updateContent = async (req: Request, res: Response) => {
@@ -115,10 +116,11 @@ export const updateContent = async (req: Request, res: Response) => {
 
     
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "No valid fields to update",
       });
+      return;
     }
 
     const result = await ContentModel.findOneAndUpdate(
@@ -128,10 +130,11 @@ export const updateContent = async (req: Request, res: Response) => {
     );
 
     if (!result) {
-      return res.status(404).json({
+       res.status(404).json({
         success: false,
         message: "Content not found or not authorized",
       });
+      return;
     }
 
     res.status(200).json({
@@ -160,10 +163,11 @@ export const deleteContent = async (req: Request, res: Response) => {
     });
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Content not found or not authorized to delete",
       });
+      return;
     }
 
     res.status(200).json({
